@@ -49,7 +49,7 @@ uint8_t MCP2515_status();
 void CAN_tx(canmsg input, uint8_t buffer_number);
 void CAN_rx(canmsg output, uint8_t buffer_number);
 void CAN_setup();
-void led_cube(uint8_t instruction, uint8_t arg1, uint8_t arg2, uint16_t *buffer);
+void led_cube(uint8_t instruction, uint16_t arg1, uint8_t arg2, uint16_t *buffer);
 
 
 /*

@@ -27,7 +27,7 @@ void CAN_setup(){
   delay(2000);
 }
 
-void led_cube(uint8_t instruction, uint8_t arg1, uint8_t arg2, uint16_t *buffer){
+void led_cube(uint8_t instruction, uint16_t arg1, uint8_t arg2, uint16_t *buffer){
   uint8_t n;
   canmsg test;
 
@@ -37,12 +37,24 @@ void led_cube(uint8_t instruction, uint8_t arg1, uint8_t arg2, uint16_t *buffer)
   test.RTR = 0;
   
   test.data[0] = instruction;
-  test.data[1] = arg1 | ((arg2 + 1) << 4);
-
-  for(n = 0; n < 3; n++){
-    test.data[(n << 1) + 3] = buffer[n] & 0xFF;
-    test.data[(n << 1) + 2] = (buffer[n] & 0xFF00) >> 8;
+  if(instruction == LOOP){
+    test.data[2] = arg1;
+    test.data[3] = arg2;
   }
+  else if(instruction == DELAY){
+    test.data[2] = (arg1 & 0xFF00) >> 8;
+    test.data[3] = arg1 & 0xFF;
+  }
+  else{
+    test.data[1] = arg1 | ((arg2 + 1) << 4);
+
+    for(n = 0; n < 3; n++){
+      test.data[(n << 1) + 3] = buffer[n] & 0xFF;
+      test.data[(n << 1) + 2] = (buffer[n] & 0xFF00) >> 8;
+    }
+  }
+  
+
 
   CAN_tx(test,0);
 }
